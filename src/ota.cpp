@@ -13,6 +13,12 @@
 #include <HTTPUpdate.h>
 #endif
 
+#define ESP_LOGE(tag, ...) Serial.printf("[ %s ]", tag); Serial.printf(__VA_ARGS__)
+#define ESP_LOGW(tag, ...) Serial.printf("[ %s ]", tag); Serial.printf(__VA_ARGS__)
+#define ESP_LOGI(tag, ...) Serial.printf("[ %s ]", tag); Serial.printf(__VA_ARGS__)
+#define ESP_LOGD(tag, ...) Serial.printf("[ %s ]", tag); Serial.printf(__VA_ARGS__)
+#define ESP_LOGV(tag, ...) Serial.printf("[ %s ]", tag); Serial.printf(__VA_ARGS__)
+
 #include <ArduinoJson.h>
 #include "semver_extensions.h"
 #include "ota.h"
@@ -21,6 +27,7 @@ bool _fetch_url_via_redirect = false;
 
 WiFiClientSecure client;
 semver_t current_version;
+String firmware_name;
 
 #ifdef ESP8266
 ESP8266HTTPUpdate Updater;
@@ -28,12 +35,12 @@ ESP8266HTTPUpdate Updater;
 HTTPUpdate Updater;
 #endif
 
-void init_ota(String version)
+void init_ota(String version, String firmware_name = "firmware.bin")
 {
-    init_ota(version, false);
+    init_ota(version, firmware_name, false);
 }
 
-void init_ota(String version, bool fetch_url_via_redirect = false)
+void init_ota(String version, String firmware_name = "firmware.bin", bool fetch_url_via_redirect = false)
 {
     ESP_LOGE("init_ota", "init_ota(version: %s, fetch_url_via_redirect: %d)\n", version.c_str(), fetch_url_via_redirect);
 
@@ -138,7 +145,7 @@ String get_updated_firmware_url_via_redirect(String releaseUrl, WiFiClientSecure
         ESP_LOGV(TAG, "Need update: %s\n", _new_version > current_version ? "yes" : "no");
         if (_new_version > current_version)
         {
-            browser_download_url = String(location + "/firmware.bin");
+            browser_download_url = String(location + "/" + firmware_name);
             browser_download_url.replace("tag", "download");
         }
     }
