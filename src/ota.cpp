@@ -35,17 +35,18 @@ ESP8266HTTPUpdate Updater;
 HTTPUpdate Updater;
 #endif
 
-void init_ota(String version, String firmware_name = "firmware.bin")
+void init_ota(String version, String _firmware_name = "firmware.bin")
 {
-    init_ota(version, firmware_name, false);
+    init_ota(version, _firmware_name, false);
 }
 
-void init_ota(String version, String firmware_name = "firmware.bin", bool fetch_url_via_redirect = false)
+void init_ota(String version, String _firmware_name = "firmware.bin", bool fetch_url_via_redirect = false)
 {
     ESP_LOGE("init_ota", "init_ota(version: %s, fetch_url_via_redirect: %d)\n", version.c_str(), fetch_url_via_redirect);
 
     _fetch_url_via_redirect = fetch_url_via_redirect;
     current_version = from_string(version.c_str());
+    firmware_name = _firmware_name;
 
 #ifdef ESP32
     client.setCACert(github_certificate);
